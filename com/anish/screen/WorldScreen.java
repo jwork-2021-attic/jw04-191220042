@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 
 import com.anish.calabashbros.BubbleSorter;
 import com.anish.calabashbros.Calabash;
+import com.anish.calabashbros.Monster;
 import com.anish.calabashbros.World;
 
 import asciiPanel.AsciiPanel;
@@ -12,21 +13,21 @@ import asciiPanel.AsciiPanel;
 public class WorldScreen implements Screen {
 
     private World world;
-    private Calabash[] bros;
+    private Monster[] bros;
     String[] sortSteps;
 
     public WorldScreen() {
         world = new World();
 
-        bros = new Calabash[7];
+        bros = new Monster[7];
 
-        bros[3] = new Calabash(new Color(204, 0, 0), 1, world);
-        bros[5] = new Calabash(new Color(255, 165, 0), 2, world);
-        bros[1] = new Calabash(new Color(252, 233, 79), 3, world);
-        bros[0] = new Calabash(new Color(78, 154, 6), 4, world);
-        bros[4] = new Calabash(new Color(50, 175, 255), 5, world);
-        bros[6] = new Calabash(new Color(114, 159, 207), 6, world);
-        bros[2] = new Calabash(new Color(173, 127, 168), 7, world);
+        bros[3] = new Monster(new Color(204, 0, 0), 1, world);
+        bros[5] = new Monster(new Color(255, 165, 0), 2, world);
+        bros[1] = new Monster(new Color(252, 233, 79), 3, world);
+        bros[0] = new Monster(new Color(78, 154, 6), 4, world);
+        bros[4] = new Monster(new Color(50, 175, 255), 5, world);
+        bros[6] = new Monster(new Color(114, 159, 207), 6, world);
+        bros[2] = new Monster(new Color(173, 127, 168), 7, world);
 
         world.put(bros[0], 10, 10);
         world.put(bros[1], 12, 10);
@@ -36,7 +37,7 @@ public class WorldScreen implements Screen {
         world.put(bros[5], 20, 10);
         world.put(bros[6], 22, 10);
 
-        BubbleSorter<Calabash> b = new BubbleSorter<>();
+        BubbleSorter<Monster> b = new BubbleSorter<>();
         b.load(bros);
         b.sort();
 
@@ -47,13 +48,13 @@ public class WorldScreen implements Screen {
         return plan.split("\n");
     }
 
-    private void execute(Calabash[] bros, String step) {
+    private void execute(Monster[] bros, String step) {
         String[] couple = step.split("<->");
         getBroByRank(bros, Integer.parseInt(couple[0])).swap(getBroByRank(bros, Integer.parseInt(couple[1])));
     }
 
-    private Calabash getBroByRank(Calabash[] bros, int rank) {
-        for (Calabash bro : bros) {
+    private Monster getBroByRank(Monster[] bros, int rank) {
+        for (Monster bro : bros) {
             if (bro.getRank() == rank) {
                 return bro;
             }
