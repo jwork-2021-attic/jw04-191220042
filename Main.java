@@ -2,6 +2,7 @@
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 
@@ -17,7 +18,7 @@ public class Main extends JFrame implements KeyListener {
     private AsciiPanel terminal;
     private Screen screen;
 
-    public Main() {
+    public Main() throws IOException {
         super();
         terminal = new AsciiPanel(World.WIDTH, World.HEIGHT, AsciiFont.TALRYTH_15_15);
         add(terminal);
@@ -51,7 +52,7 @@ public class Main extends JFrame implements KeyListener {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Main app = new Main();
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setVisible(true);

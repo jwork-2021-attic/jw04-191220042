@@ -2,43 +2,53 @@ package com.anish.screen;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import com.anish.calabashbros.BubbleSorter;
-import com.anish.calabashbros.Calabash;
 import com.anish.calabashbros.Monster;
+import com.anish.calabashbros.MonsterFactory;
 import com.anish.calabashbros.World;
 
 import asciiPanel.AsciiPanel;
 
 public class WorldScreen implements Screen {
 
+    final int length=8;
     private World world;
-    private Monster[] bros;
+    private Monster[][] bros;
+    private Monster[] line;
     String[] sortSteps;
+    private MonsterFactory monFac;
 
-    public WorldScreen() {
+
+
+    public WorldScreen() throws IOException {
         world = new World();
+        monFac = new MonsterFactory();
+        monFac.initFactory(length,world);
+        bros = new Monster[length][length];
 
-        bros = new Monster[7];
+        ArrayList<Monster> monarmy=monFac.product();
+        for (int i=0;i<length*length;i++) {
+            bros[i / length][i % length] = monarmy.get(i);
+        }
 
-        bros[3] = new Monster(new Color(204, 0, 0), 1, world);
-        bros[5] = new Monster(new Color(255, 165, 0), 2, world);
-        bros[1] = new Monster(new Color(252, 233, 79), 3, world);
-        bros[0] = new Monster(new Color(78, 154, 6), 4, world);
-        bros[4] = new Monster(new Color(50, 175, 255), 5, world);
-        bros[6] = new Monster(new Color(114, 159, 207), 6, world);
-        bros[2] = new Monster(new Color(173, 127, 168), 7, world);
+        int basex=2,basey=2;
+        for (int j = 0; j <length ; j++) {
+            for (int k = 0; k <length ; k++) {
+                world.put(bros[j][k],basex+j*2,basey+k*2);
+            }
+        }
 
-        world.put(bros[0], 10, 10);
-        world.put(bros[1], 12, 10);
-        world.put(bros[2], 14, 10);
-        world.put(bros[3], 16, 10);
-        world.put(bros[4], 18, 10);
-        world.put(bros[5], 20, 10);
-        world.put(bros[6], 22, 10);
-
+        line=new Monster[length*length];
+        for (int j = 0; j <length ; j++) {
+            for (int k = 0; k <length ; k++) {
+                line[j*length+k]=bros[j][k];
+            }
+        }
         BubbleSorter<Monster> b = new BubbleSorter<>();
-        b.load(bros);
+        b.load(line);
         b.sort();
 
         sortSteps = this.parsePlan(b.getPlan());
@@ -80,7 +90,7 @@ public class WorldScreen implements Screen {
     public Screen respondToUserInput(KeyEvent key) {
 
         if (i < this.sortSteps.length) {
-            this.execute(bros, sortSteps[i]);
+            this.execute(line, sortSteps[i]);
             i++;
         }
 
