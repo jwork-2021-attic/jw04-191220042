@@ -5,70 +5,55 @@ import java.awt.event.KeyEvent;
 
 import com.anish.calabashbros.BubbleSorter;
 import com.anish.calabashbros.Calabash;
+import com.anish.calabashbros.Obstacle;
 import com.anish.calabashbros.World;
 
 import asciiPanel.AsciiPanel;
+import maze.MazeGenerator;
 
 public class WorldScreen implements Screen {
 
     private World world;
-    private Calabash[] bros;
-    String[] sortSteps;
+    private Calabash bros;
+    private MazeGenerator mazeGenerator;
+    private int myX,myY;
+    private int maze[][];
+    final int length=40;
 
     public WorldScreen() {
         world = new World();
+        mazeGenerator=new MazeGenerator(length);
+        mazeGenerator.generateMaze();
 
-        bros = new Calabash[7];
-
-        bros[3] = new Calabash(new Color(204, 0, 0), 1, world);
-        bros[5] = new Calabash(new Color(255, 165, 0), 2, world);
-        bros[1] = new Calabash(new Color(252, 233, 79), 3, world);
-        bros[0] = new Calabash(new Color(78, 154, 6), 4, world);
-        bros[4] = new Calabash(new Color(50, 175, 255), 5, world);
-        bros[6] = new Calabash(new Color(114, 159, 207), 6, world);
-        bros[2] = new Calabash(new Color(173, 127, 168), 7, world);
-
-        world.put(bros[0], 10, 10);
-        world.put(bros[1], 12, 10);
-        world.put(bros[2], 14, 10);
-        world.put(bros[3], 16, 10);
-        world.put(bros[4], 18, 10);
-        world.put(bros[5], 20, 10);
-        world.put(bros[6], 22, 10);
-
-        BubbleSorter<Calabash> b = new BubbleSorter<>();
-        b.load(bros);
-        b.sort();
-
-        sortSteps = this.parsePlan(b.getPlan());
-    }
-
-    private String[] parsePlan(String plan) {
-        return plan.split("\n");
-    }
-
-    private void execute(Calabash[] bros, String step) {
-        String[] couple = step.split("<->");
-        getBroByRank(bros, Integer.parseInt(couple[0])).swap(getBroByRank(bros, Integer.parseInt(couple[1])));
-    }
-
-    private Calabash getBroByRank(Calabash[] bros, int rank) {
-        for (Calabash bro : bros) {
-            if (bro.getRank() == rank) {
-                return bro;
+        bros = new Calabash(new Color(252, 233, 79), 1, world);
+        world.put(bros,0,0);
+        myX=0;myY=0;
+        maze=mazeGenerator.getMaze();
+        for (int i = 0; i < length; i++) {
+            for (int j = 0; j <length; j++) {
+                if(maze[i][j]==0) {
+                    Obstacle obs = new Obstacle(new Color(0, 233, 0), (char) 10, world);
+                    world.put(obs,i,j);
+                }
             }
         }
-        return null;
     }
+
+
+    private void execute(Calabash bros,int xPos,int yPos) {
+        System.out.println(xPos);
+        System.out.println(yPos);
+        bros.moveTo(myX,myY);
+    }
+
+
 
     @Override
     public void displayOutput(AsciiPanel terminal) {
 
         for (int x = 0; x < World.WIDTH; x++) {
             for (int y = 0; y < World.HEIGHT; y++) {
-
                 terminal.write(world.get(x, y).getGlyph(), x, y, world.get(x, y).getColor());
-
             }
         }
     }
@@ -77,10 +62,29 @@ public class WorldScreen implements Screen {
 
     @Override
     public Screen respondToUserInput(KeyEvent key) {
-
-        if (i < this.sortSteps.length) {
-            this.execute(bros, sortSteps[i]);
-            i++;
+        if(key.getKeyCode()==KeyEvent.VK_RIGHT&&myX<length&&maze[myX+1][myY]==1) {
+            Obstacle obs = new Obstacle(new Color(200, 0, 0), (char) 6, world);
+            world.put(obs,myX,myY);
+            myX++;
+            execute(bros,myX,myY);
+        }
+        if(key.getKeyCode()==KeyEvent.VK_UP&&myY>0&&maze[myX][myY-1]==1) {
+            Obstacle obs = new Obstacle(new Color(200, 0, 0), (char) 6, world);
+            world.put(obs,myX,myY);
+            myY--;
+            execute(bros,myX,myY);
+        }
+        if(key.getKeyCode()==KeyEvent.VK_DOWN&&myY<length&&maze[myX][myY+1]==1) {
+            Obstacle obs = new Obstacle(new Color(200, 0, 0), (char) 6, world);
+            world.put(obs,myX,myY);
+            myY++;
+            execute(bros,myX,myY);
+        }
+        if(key.getKeyCode()==KeyEvent.VK_LEFT&&myX>0&&maze[myX-1][myY]==1) {
+            Obstacle obs = new Obstacle(new Color(200, 0, 0), (char) 6, world);
+            world.put(obs,myX,myY);
+            myX--;
+            execute(bros,myX,myY);
         }
 
         return this;
